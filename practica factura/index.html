@@ -39,12 +39,9 @@
 
   <script>
     // ✅ Tu URL y API KEY aquí:
-    const supabaseUrl = 'https://nchizirismypnzpdprrf.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jaGl6aXJpc215cG56cGRwcnJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTk1OTcsImV4cCI6MjA2NTE3NTU5N30.mZLWYyXWJygDlvyG3RVmzD00n4xxLocrm_nFMPCo0cI';
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     const productos = [];
-
+    import supabase from "../config/supabaseClient"  
     function agregarProducto() {
       const nombre = document.getElementById('producto').value;
       const precio = parseFloat(document.getElementById('precio').value);
