@@ -1,8 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Factura Simple</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
 
@@ -29,13 +31,18 @@
       </tr>
     </thead>
     <tbody id="lista-productos">
-      <!-- Aquí se agregan los productos -->
     </tbody>
   </table>
 
   <h3>Total con IVA (12%): $<span id="total">0.00</span></h3>
+  <button onclick="guardarFactura()">Guardar en Supabase</button>
 
   <script>
+    // ✅ Tu URL y API KEY aquí:
+    const supabaseUrl = 'https://nchizirismypnzpdprrf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jaGl6aXJpc215cG56cGRwcnJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1OTk1OTcsImV4cCI6MjA2NTE3NTU5N30.mZLWYyXWJygDlvyG3RVmzD00n4xxLocrm_nFMPCo0cI';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
     const productos = [];
 
     function agregarProducto() {
@@ -75,11 +82,9 @@
 
     function calcularTotal() {
       let subtotal = 0;
-
       productos.forEach(item => {
         subtotal += item.precio * item.cantidad;
       });
-
       const totalConIVA = subtotal + (subtotal * 0.12);
       document.getElementById('total').textContent = totalConIVA.toFixed(2);
     }
@@ -89,7 +94,34 @@
       document.getElementById('precio').value = '';
       document.getElementById('cantidad').value = '';
     }
+
+    async function guardarFactura() {
+      let subtotal = 0;
+      let cantidadTotal = 0;
+
+      productos.forEach(item => {
+        subtotal += item.precio * item.cantidad;
+        cantidadTotal += item.cantidad;
+      });
+
+      const totalConIVA = subtotal + (subtotal * 0.12);
+
+      const { data, error } = await supabase
+        .from('facturas')
+        .insert([
+          { total: totalConIVA, cantidad_total: cantidadTotal }
+        ]);
+
+      if (error) {
+        console.error('Error al guardar en Supabase:', error.message);
+        alert('Error al guardar la factura.');
+      } else {
+        alert('Factura guardada correctamente en Supabase.');
+        console.log('Datos guardados:', data);
+      }
+    }
   </script>
 
 </body>
 </html>
+
